@@ -21,10 +21,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.userfront.domain.security.Authority;
 import com.userfront.domain.security.UserRole;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 public class User implements UserDetails{
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userId", nullable = false, updatable = false)
@@ -198,7 +198,7 @@ public class User implements UserDetails{
         return true;
     }
 
-    @Override
+   @Override
     public boolean isEnabled() {
         return enabled;
     }

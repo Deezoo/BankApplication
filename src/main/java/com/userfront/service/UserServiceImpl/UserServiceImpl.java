@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private AccountService accountService;
 	
@@ -54,7 +55,8 @@ public class UserServiceImpl implements UserService{
         if (localUser != null) {
             LOG.info("User with username {} already exist. Nothing will be done. ", user.getUsername());
         } else {
-            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        //   String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            String encryptedPassword = user.getPassword();
             user.setPassword(encryptedPassword);
 
             for (UserRole ur : userRoles) {
@@ -78,13 +80,14 @@ public class UserServiceImpl implements UserService{
         } else {
             return false;
         }
+        // return checkUsernameExists(username) || checkEmailExists(username);
     }
 
     public boolean checkUsernameExists(String username) {
         if (null != findByUsername(username)) {
             return true;
         }
-
+//return null != findByUsername(username);
         return false;
     }
     
@@ -92,6 +95,7 @@ public class UserServiceImpl implements UserService{
         if (null != findByEmail(email)) {
             return true;
         }
+      //  return null != findByUsername(username);
 
         return false;
     }
