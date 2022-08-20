@@ -10,3 +10,4 @@ public class UserFrontApplication {
 		SpringApplication.run(UserFrontApplication.class, args);
 	}
 }
+

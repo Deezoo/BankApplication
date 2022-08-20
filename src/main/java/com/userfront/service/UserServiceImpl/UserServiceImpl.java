@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.userfront.dao.RoleDao;
 import com.userfront.dao.UserDao;
 import com.userfront.domain.User;
@@ -17,11 +16,17 @@ import com.userfront.domain.security.UserRole;
 import com.userfront.service.AccountService;
 import com.userfront.service.UserService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService{
-	
-	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
 	
 	@Autowired
 	private UserDao userDao;
@@ -31,7 +36,7 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private AccountService accountService;
 	
@@ -54,12 +59,13 @@ public class UserServiceImpl implements UserService{
         if (localUser != null) {
             LOG.info("User with username {} already exist. Nothing will be done. ", user.getUsername());
         } else {
-            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        //   String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            String encryptedPassword = user.getPassword();
             user.setPassword(encryptedPassword);
 
-            for (UserRole ur : userRoles) {
-                roleDao.save(ur.getRole());
-            }
+//            for (UserRole ur : userRoles) {
+//                roleDao.save(ur.getRole());
+//            }
 
             user.getUserRoles().addAll(userRoles);
 
@@ -78,13 +84,13 @@ public class UserServiceImpl implements UserService{
         } else {
             return false;
         }
+        // return checkUsernameExists(username) || checkEmailExists(username);
     }
 
     public boolean checkUsernameExists(String username) {
         if (null != findByUsername(username)) {
             return true;
         }
-
         return false;
     }
     
@@ -97,6 +103,8 @@ public class UserServiceImpl implements UserService{
     }
 
     public User saveUser (User user) {
+       entityManager.persist(user);
+
         return userDao.save(user);
     }
     

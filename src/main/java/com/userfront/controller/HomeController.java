@@ -29,14 +29,22 @@ public class HomeController {
 	
 	@RequestMapping("/")
 	public String home() {
-		return "redirect:/index";
+
+        return "redirect:/index";
 	}
 	
 	@RequestMapping("/index")
     public String index() {
+
         return "index";
     }
-	
+
+//    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    public String login() {
+//
+//        return "profile";
+//    }
+
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String signup(Model model) {
         User user = new User();
@@ -66,7 +74,7 @@ public class HomeController {
 
             userService.createUser(user, userRoles);
 
-            return "redirect:/";
+            return "profile";
         }
     }
 	
@@ -81,4 +89,5 @@ public class HomeController {
 
         return "userFront";
     }
+
 }

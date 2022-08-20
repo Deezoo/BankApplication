@@ -30,6 +30,8 @@ public class RequestFilter implements Filter {
             try {
                 chain.doFilter(req, res);
             } catch(Exception e) {
+
+              //  System.out.println(e);
                 e.printStackTrace();
             }
         } else {

@@ -1,7 +1,6 @@
 package com.userfront.config;
 
-import java.security.SecureRandom;
-
+import com.userfront.service.UserServiceImpl.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,19 +9,20 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.SecurityFilterChain;
 
-import com.userfront.service.UserServiceImpl.UserSecurityService;
+import java.security.SecureRandom;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
+
 public class SecurityConfig {
 
-//    @Autowired
-//    private Environment env;
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private UserSecurityService userSecurityService;
@@ -47,34 +47,32 @@ public class SecurityConfig {
             "/signup"
     };
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests().
-////                antMatchers("/**").
-//                antMatchers(PUBLIC_MATCHERS).
-//                permitAll().anyRequest().authenticated();
-//
-//        http
-//                .csrf().disable().cors().disable()
-//                .formLogin().failureUrl("/index?error").defaultSuccessUrl("/userFront").loginPage("/index").permitAll()
-//                .and()
-//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/index?logout").deleteCookies("remember-me").permitAll()
-//                .and()
-//                .rememberMe();
-//    }
 
-    protected void configure(HttpSecurity security) throws Exception {
-        security.httpBasic().disable();
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/login").permitAll()
+
+   //             .anyRequest().authenticated()
+                .and().formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+                .logout().permitAll();
+
+
+        return http.build();
+            }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers("/login");
     }
-
 
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//    	 auth.inMemoryAuthentication().withUser("user").password("password").roles("USER"); //This is in-memory authentication
-        auth.userDetailsService(userSecurityService).passwordEncoder(passwordEncoder());
+    	 auth.inMemoryAuthentication().withUser("user").password("password").roles("USER"); //This is in-memory authentication
+     //    auth.userDetailsService(userSecurityService).passwordEncoder(passwordEncoder());
     }
-
-
 }
+
+

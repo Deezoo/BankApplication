@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.userfront.dao.PrimaryAccountDao;
 import com.userfront.dao.SavingsAccountDao;
 import com.userfront.domain.PrimaryAccount;
@@ -21,7 +20,7 @@ import com.userfront.service.UserService;
 @Service
 public class AccountServiceImpl implements AccountService {
 	
-	private static int nextAccountNumber = 11223145;
+	private static int nextAccountNumber = 1122314535;
 
     @Autowired
     private PrimaryAccountDao primaryAccountDao;
@@ -41,8 +40,9 @@ public class AccountServiceImpl implements AccountService {
         primaryAccount.setAccountNumber(accountGen());
 
         primaryAccountDao.save(primaryAccount);
+        return primaryAccount;
 
-        return primaryAccountDao.findByAccountNumber(primaryAccount.getAccountNumber());
+//        return primaryAccountDao.findByAccountNumber(primaryAccount.getAccountNumber());
     }
 
     public SavingsAccount createSavingsAccount() {
@@ -51,8 +51,9 @@ public class AccountServiceImpl implements AccountService {
         savingsAccount.setAccountNumber(accountGen());
 
         savingsAccountDao.save(savingsAccount);
+        return savingsAccount;
 
-        return savingsAccountDao.findByAccountNumber(savingsAccount.getAccountNumber());
+        //return savingsAccountDao.findByAccountNumber(savingsAccount.getAccountNumber());
     }
     
     public void deposit(String accountType, double amount, Principal principal) {
